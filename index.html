@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Webmin by KeiroD</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Webmin</h1>
+        <h2>A collection of scripts, configurations and the like for Webmin</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/KeiroD/Webmin/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/KeiroD/Webmin/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/KeiroD/Webmin" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="webmin" class="anchor" href="#webmin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Webmin</h1>
+
+<p>A collection of scripts, configurations and the like for Webmin</p>
+
+<h2>
+<a id="what-is-this-for" class="anchor" href="#what-is-this-for" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is this for?</h2>
+
+<p>Basically, it's to help me work with <code>Webmin</code>. I decided to use <a href="http://webmin.com">Webmin</a> as the router interface, using <code>Ubuntu 14.04.3 LTS</code> as the base OS. No, not the desktop variant. The Server variant.</p>
+
+<h3>
+<a id="enabling-ssl-with-lets-encrypt-for-webmin" class="anchor" href="#enabling-ssl-with-lets-encrypt-for-webmin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enabling SSL with Let's Encrypt for Webmin</h3>
+
+<p>I won't go into detail on how to get <code>lets-encrypt</code> working. There's <a href="https://github.com/letsencrypt/letsencrypt">Let's Encrypt Github</a> for that.</p>
+
+<p>This is the following configuration that works for me personally, giving us true HTTPS with Webmin.</p>
+
+<p>Edit <code>/etc/webmin/miniserv.conf</code> and either add the following or edit the existing SSL options that're shown below to something similar to the below configurations. If you're unsure, simply remove the existing options and add the following to the bottom of <code>miniserv.conf</code> and do a <code>service webmin restart</code>:</p>
+
+<pre><code>keyfile=/etc/letsencrypt/live/exampledomain.com/privkey.pem
+certfile=/etc/letsencrypt/live/exampledomain.com/fullchain.pem
+ssl=1
+ssl_redirect=1
+#ssl_version=10 # For some reason, Webmin doesn't respect this particular setting and thus, cause your Webmin to load with TLS 1.0 instead, which is what we DON'T want. Also, delete the comment when pasting this into miniserv.conf because Webmin will throw that shit out.
+Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains; preload"
+no_tls1_1=
+no_ssl2=1
+extracas=
+no_ssl3=1
+no_sslcompression=1
+no_tls1_2=
+ssl_honorcipherorder=0
+no_tls1=1
+</code></pre>
+
+<h4>
+<a id="enabling-ssl-certificate-renewals-with-lets-encrypt-for-webmin" class="anchor" href="#enabling-ssl-certificate-renewals-with-lets-encrypt-for-webmin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enabling SSL Certificate Renewals with Let's Encrypt for Webmin</h4>
+
+<p>So, to automate <code>lets-encrypt</code> on <code>Webmin</code>, you'll need to create a <code>bash</code> script. Thanks to <a href="https://blazingumbra.com">Cyclops</a> for the <code>bash</code> script that works for automating <code>lets-encrypt</code> cert renewals!</p>
+
+<p>This is the following configuration that works for me personally, giving us true lets-encrypt automation with Webmin. Note that the order of certonly is important.</p>
+
+<p><code>renew.sh</code> contains the following code:</p>
+
+<pre><code>#!/bin/bash
+# Get new keys!
+/root/letsencrypt/letsencrypt-auto -c /root/cli.ini certonly
+
+# Reload Servoces
+service webmin restart
+</code></pre>
+
+<p><code>cli.ini</code> contains the following:</p>
+
+<pre><code># LE Configuration
+rsa-key-size = 4096
+email = example@example.com
+domains = example.com
+renew-by-default = True
+text = True
+agree-tos
+</code></pre>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
