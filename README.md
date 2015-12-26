@@ -24,4 +24,5 @@ no_sslcompression=1
 no_tls1_2=
 ssl_honorcipherorder=0
 no_tls1=1
+ssl_cipher_list=EECDH+AES:EDH+AES:-SHA1:EECDH+RC4:EDH+RC4:RC4-SHA:EECDH+AES256:EDH+AES256:AES256-SHA:!aNULL:!eNULL:!EXP:!LOW:!MD5
 ```
